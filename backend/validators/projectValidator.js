@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 const createProjectValidator = [
   body("title")
@@ -113,4 +113,39 @@ const updateProjectValidator = [
     .withMessage("Image publicId is required if image is provided"),
 ];
 
-export { createProjectValidator, updateProjectValidator };
+const getAllProjectsValidator = [
+  query("search")
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage("Search query too long"),
+
+  query("sort")
+    .optional()
+    .trim()
+    .custom((value) => {
+      const validFields = ["createdAt", "title", "totalLikes"];
+      const fields = value.split(" ").map((field) => field.replace("-", ""));
+      const allValid = fields.every((field) => validFields.includes(field));
+      if (!allValid) throw new Error("Invalid sort fields");
+      return true;
+    }),
+
+  query("page")
+    .optional()
+    .toInt()
+    .isInt({ min: 1 })
+    .withMessage("page must be a valid integer greater than 0"),
+
+  query("limit")
+    .optional()
+    .toInt()
+    .isInt({ min: 1, max: 50 })
+    .withMessage("limit must be a valid integer between 1 and 50"),
+];
+
+export {
+  createProjectValidator,
+  updateProjectValidator,
+  getAllProjectsValidator,
+};

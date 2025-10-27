@@ -37,10 +37,10 @@ export const getAllProjects = async (req, res) => {
 
   projects = await Promise.all(
     projects.map(async (project) => {
-      const totalLikes = await Like.countDocuments({ project: project._id });
+      // const totalLikes = await Like.countDocuments({ project: project._id });
 
       const userhasLiked = userLikedIds.has(String(project._id));
-      return { ...project, totalLikes, userhasLiked };
+      return { ...project, userhasLiked };
     })
   );
 

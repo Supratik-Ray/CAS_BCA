@@ -19,6 +19,7 @@ import { uploadImage } from "../controllers/uploadController.js";
 
 //validators
 import {
+  getAllProjectsValidator,
   createProjectValidator,
   updateProjectValidator,
 } from "../validators/projectValidator.js";
@@ -31,7 +32,7 @@ const router = express.Router();
 //projects
 router
   .route("/")
-  .get(getAllProjects)
+  .get(getAllProjectsValidator, validateRequest, getAllProjects)
   .post(createProjectValidator, validateRequest, createProject);
 
 router

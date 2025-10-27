@@ -7,6 +7,7 @@ const ProjectSchema = new mongoose.Schema(
     image: { url: String, publicId: String },
     liveLink: String,
     githubLink: String,
+    totalLikes: { type: Number, default: 0 },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: "User",
