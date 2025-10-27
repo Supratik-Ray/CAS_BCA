@@ -1,35 +1,42 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "../hooks/useAuth";
-import supabase from "../api/supabaseClient";
-import { signInUser, signOutUser, signUpUser } from "../api/authApi";
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [{ user, token, isAuthenticated }, setAuthState] = useState({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    //load session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsLoading(false);
-    });
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    //subscribe to auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    if (token && user) {
+      setAuthState({ user, token, isAuthenticated: true });
+    }
+    setIsLoading(false);
   }, []);
 
-  const login = async (email, password) => await signInUser(email, password);
-  const signUp = async (email, password) => await signUpUser(email, password);
-  const logout = async () => await signOutUser();
+  const login = (user, token) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    setAuthState({ user, token, isAuthenticated: true });
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setAuthState({ user: null, token: null, isAuthenticated: false });
+  };
 
   return (
-    <AuthContext.Provider value={{ session, isLoading, login, logout, signUp }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, token, login, logout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

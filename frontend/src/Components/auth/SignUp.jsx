@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpSchema } from "../../schemas/authSchemas";
 import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../hooks/useAuth";
@@ -16,6 +16,7 @@ function SignUp() {
     handleSubmit,
   } = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -24,18 +25,32 @@ function SignUp() {
     onSubmit,
   });
 
-  const { signUp } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   async function onSubmit(values, actions) {
     try {
-      const { email, password } = values;
-      const result = await signUp(email, password);
-      if (result.success) {
-        toast("Please check your mail to confirm!");
+      const { name, email, password } = values;
+      const res = await fetch("http://localhost:5000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      if (data.success) {
+        login(data.user, data.token);
+        toast.success("Successfully registered account!");
         actions.resetForm();
+        navigate("/", { replace: true });
         return;
+      } else {
+        toast.error("Some error occured!");
       }
-      toast.error(result.error);
     } catch (error) {
       console.error(`some error occured: ${error.message}`);
     }
@@ -46,6 +61,25 @@ function SignUp() {
       onSubmit={handleSubmit}
       className="w-full md:w-3/5 md:max-w-[600px] flex flex-col gap-5 p-10 bg-white shadow-lg"
     >
+      <div className="flex flex-col gap-1">
+        <label htmlFor="name" className="font-semibold">
+          Name
+        </label>
+        <input
+          type="text"
+          className="border border-gray-300 rounded-sm  p-2"
+          placeholder="Enter your Name"
+          value={values.name}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          id="name"
+        />
+        {errors.name && touched.name ? (
+          <p className="text-sm text-red-500">{errors.name}</p>
+        ) : (
+          ""
+        )}
+      </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="font-semibold">
           Email

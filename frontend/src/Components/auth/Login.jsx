@@ -30,16 +30,31 @@ function Login() {
   const from = location.state?.from?.pathname || "/cas_bca.sit";
 
   async function onSubmit(values, actions) {
-    const { email, password } = values;
+    try {
+      const { email, password } = values;
+      const res = await fetch("http://localhost:5000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const result = await login(email, password);
+      const data = await res.json();
+      console.log(data);
 
-    if (result.success) {
-      navigate(from, { state: { showLoginToast: true }, replace: true });
-      actions.resetForm();
-      return;
+      if (data.success) {
+        login(data.user, data.token);
+        toast.success("Successfully logged in!");
+        actions.resetForm();
+        navigate(from, { replace: true });
+        return;
+      } else {
+        toast.error("Some error occured!");
+      }
+    } catch (error) {
+      console.error(`some error occured: ${error.message}`);
     }
-    toast.error(result.error);
   }
 
   return (

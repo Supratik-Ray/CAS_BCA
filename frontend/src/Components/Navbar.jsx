@@ -8,9 +8,9 @@ import UserDropdown from "./UserDropDown";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { session } = useAuth();
+  const { isAuthenticated} = useAuth();
 
-  console.log(session?.user?.email);
+  console.log(isAuthenticated, "asdasdasdas");
 
   const handleClick = () => {
     const whatsAppLink = "https://chat.whatsapp.com/BhEtOii34mF9rCl8vwqAf9";
@@ -64,7 +64,7 @@ function Navbar() {
 
         {/* RIGHT: Actions (hidden on mobile + medium screen) */}
         <div className="hidden lg:flex items-center gap-4">
-          {session?.user ? (
+          {isAuthenticated ? (
             <UserDropdown />
           ) : (
             <Link

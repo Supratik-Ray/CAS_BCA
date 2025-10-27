@@ -5,7 +5,7 @@ import { FiLogOut } from "react-icons/fi";
 
 export default function UserDropdown() {
   const [open, setOpen] = useState(false);
-  const { session, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -19,9 +19,7 @@ export default function UserDropdown() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-md shadow hover:bg-blue-500 hover:cursor-pointer"
       >
-        <span className="text-sm font-medium">
-          {session?.user?.email.split("@")[0]}
-        </span>
+        <span className="text-sm font-medium">{user.name}</span>
         <svg
           className="w-4 h-4"
           fill="none"
