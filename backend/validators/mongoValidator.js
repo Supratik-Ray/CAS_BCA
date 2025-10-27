@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { param } from "express-validator";
 const mongoIdValidator = (idName) => [
   param(idName)

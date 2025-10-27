@@ -7,6 +7,7 @@ import authRouter from "./routes/authRoutes.js";
 import projectRouter from "./routes/projectRoutes.js";
 import notFoundMiddleware from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
+import authenticationMiddleware from "./middlewares/authentication.js";
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/projects", authenticationMiddleware, projectRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

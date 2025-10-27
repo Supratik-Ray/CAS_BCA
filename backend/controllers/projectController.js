@@ -24,9 +24,13 @@ export const getAllProjects = async (req, res) => {
 
   const skip = (page - 1) * limit;
 
-  let projects = await result.skip(skip).limit(Number(limit)).lean();
+  let projects = await result
+    .skip(skip)
+    .limit(Number(limit))
+    .populate("createdBy", "_id name")
+    .lean();
 
-  const userLikes = await Like.find({ user: req.user.userId }).select(
+  const userLikes = await Like.find({ createdBy: req.user.userId }).select(
     "project"
   );
   const userLikedIds = new Set(userLikes.map((like) => String(like.project)));
@@ -34,6 +38,7 @@ export const getAllProjects = async (req, res) => {
   projects = await Promise.all(
     projects.map(async (project) => {
       const totalLikes = await Like.countDocuments({ project: project._id });
+
       const userhasLiked = userLikedIds.has(String(project._id));
       return { ...project, totalLikes, userhasLiked };
     })

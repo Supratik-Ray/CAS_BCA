@@ -26,18 +26,13 @@ import { mongoIdValidator } from "../validators/mongoValidator.js";
 import { commentBodyValidator } from "../validators/commentValidator.js";
 import validateRequest from "../middlewares/validateRequest.js";
 
-//middlewares
-import authenticationMiddleware from "../middlewares/authentication.js";
-
 const router = express.Router();
 
-//public routes
-router.get("/", getAllProjects);
-router.use(authenticationMiddleware);
-
-//protected routes
 //projects
-router.route("/").post(createProjectValidator, validateRequest, createProject);
+router
+  .route("/")
+  .get(getAllProjects)
+  .post(createProjectValidator, validateRequest, createProject);
 
 router
   .route("/:id")
