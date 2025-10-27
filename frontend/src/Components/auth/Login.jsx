@@ -32,7 +32,7 @@ function Login() {
   async function onSubmit(values, actions) {
     try {
       const { email, password } = values;
-      const res = await fetch("http://localhost:5000/api/v1/auth/login", {
+      const res = await fetch("https://cas-bca.onrender.com/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
