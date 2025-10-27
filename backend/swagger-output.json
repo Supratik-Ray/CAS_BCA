@@ -1,0 +1,281 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My API",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": { "example": "user@example.com" },
+                "password": { "example": "password123" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "example": "John Doe" },
+                "email": { "example": "user@example.com" },
+                "password": { "example": "password123" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/": {
+      "get": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "search", "in": "query", "type": "string" },
+          { "name": "sort", "in": "query", "type": "string" },
+          { "name": "page", "in": "query", "type": "string" },
+          { "name": "limit", "in": "query", "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "post": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "example": "New Project" },
+                "description": { "example": "Project description here" },
+                "image": { "example": "https://example.com/image.jpg" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/{id}": {
+      "get": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "delete": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "patch": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "example": "Updated Title" },
+                "description": { "example": "Updated description" },
+                "image": { "example": "https://example.com/newimage.jpg" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/{id}/comments": {
+      "get": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "post": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": { "example": "Nice project!" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/{id}/comments/{commentId}": {
+      "delete": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "patch": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": { "example": "Updated comment text" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/{id}/likes": {
+      "post": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      },
+      "delete": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    },
+
+    "/api/v1/projects/imageUploads": {
+      "post": {
+        "description": "",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "format": "binary",
+                  "example": "file.png"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": { "description": "" }
+        }
+      }
+    }
+  }
+}
