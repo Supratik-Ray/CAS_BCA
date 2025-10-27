@@ -1,6 +1,6 @@
 import { param } from "express-validator";
-const mongoIdValidator = [
-  param("id")
+const mongoIdValidator = (idName) => [
+  param(idName)
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
     .withMessage("Invalid project ID"),
 ];

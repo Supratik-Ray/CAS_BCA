@@ -23,6 +23,7 @@ import {
   updateProjectValidator,
 } from "../validators/projectValidator.js";
 import { mongoIdValidator } from "../validators/mongoValidator.js";
+import { commentBodyValidator } from "../validators/commentValidator.js";
 import validateRequest from "../middlewares/validateRequest.js";
 
 //middlewares
@@ -40,23 +41,45 @@ router.route("/").post(createProjectValidator, validateRequest, createProject);
 
 router
   .route("/:id")
-  .get(mongoIdValidator, validateRequest, getProject)
+  .get(mongoIdValidator("id"), validateRequest, getProject)
   .patch(
-    [mongoIdValidator, updateProjectValidator],
+    [mongoIdValidator("id"), updateProjectValidator],
     validateRequest,
     updateProject
   )
-  .delete(mongoIdValidator, validateRequest, deleteProject);
+  .delete(mongoIdValidator("id"), validateRequest, deleteProject);
 
 //comments
-router.route("/:id/comments").get(getAllComments).post(createComment);
+router
+  .route("/:id/comments")
+  .get(mongoIdValidator("id"), validateRequest, getAllComments)
+  .post(
+    mongoIdValidator("id"),
+    commentBodyValidator,
+    validateRequest,
+    createComment
+  );
 router
   .route("/:id/comments/:commentId")
-  .patch(updateComment)
-  .delete(deleteComment);
+  .patch(
+    mongoIdValidator("id"),
+    mongoIdValidator("commentId"),
+    commentBodyValidator,
+    validateRequest,
+    updateComment
+  )
+  .delete(
+    mongoIdValidator("id"),
+    mongoIdValidator("commentId"),
+    validateRequest,
+    deleteComment
+  );
 
 //likes
-router.route("/:id/likes").post(createLike).delete(deleteLike);
+router
+  .route("/:id/likes")
+  .post(mongoIdValidator("id"), validateRequest, createLike)
+  .delete(mongoIdValidator("id"), validateRequest, deleteLike);
 
 //uploads
 router.route("/imageUploads").post(uploadImage);

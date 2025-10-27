@@ -1,8 +1,9 @@
 import { matchedData } from "express-validator";
 import Project from "../models/project.js";
 import { StatusCodes } from "http-status-codes";
-import { NotFoundError } from "../errors/index.js";
+import { BadRequestError, NotFoundError } from "../errors/index.js";
 import cloudinary from "../config/cloudinary.js";
+import Like from "../models/Like.js";
 
 //:TODO -> TO ADD VALIDATION FOR GETALLPROJECTS
 export const getAllProjects = async (req, res) => {
@@ -23,7 +24,20 @@ export const getAllProjects = async (req, res) => {
 
   const skip = (page - 1) * limit;
 
-  const projects = await result.skip(skip).limit(Number(limit));
+  let projects = await result.skip(skip).limit(Number(limit)).lean();
+
+  const userLikes = await Like.find({ user: req.user.userId }).select(
+    "project"
+  );
+  const userLikedIds = new Set(userLikes.map((like) => String(like.project)));
+
+  projects = await Promise.all(
+    projects.map(async (project) => {
+      const totalLikes = await Like.countDocuments({ project: project._id });
+      const userhasLiked = userLikedIds.has(String(project._id));
+      return { ...project, totalLikes, userhasLiked };
+    })
+  );
 
   res.status(StatusCodes.OK).json({ success: true, projects });
 };
@@ -51,6 +65,10 @@ export const getProject = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   const { id: projectId, ...updateData } = matchedData(req);
+
+  if (Object.keys(updateData).length === 0) {
+    throw new BadRequestError("no data provided for updating project");
+  }
 
   const oldProject = await Project.findOneAndUpdate(
     { _id: projectId, createdBy: req.user.userId },
