@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { matchedData } from "express-validator";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import Like from "../models/Like.js";
-import Project from "../models/project.js";
+import Project from "../models/Project.js";
 
 export const createLike = async (req, res) => {
   const { id: projectId } = matchedData(req);

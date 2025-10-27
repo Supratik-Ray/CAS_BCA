@@ -1,5 +1,5 @@
 import { matchedData } from "express-validator";
-import Project from "../models/project.js";
+import Project from "../models/Project.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import cloudinary from "../config/cloudinary.js";
