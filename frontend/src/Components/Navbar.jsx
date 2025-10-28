@@ -8,7 +8,7 @@ import UserDropdown from "./UserDropDown";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated} = useAuth();
+  const { isAuthenticated } = useAuth();
 
   console.log(isAuthenticated, "asdasdasdas");
 
@@ -59,6 +59,12 @@ function Navbar() {
             className="hover:font-semibold hover:underline transform transition duration-300 hover:scale-105"
           >
             Add Project
+          </Link>
+          <Link
+            to={"/cas_bca.sit/project-showcase"}
+            className="hover:font-semibold hover:underline transform transition duration-300 hover:scale-105"
+          >
+            Project Showcase
           </Link>
         </ul>
 

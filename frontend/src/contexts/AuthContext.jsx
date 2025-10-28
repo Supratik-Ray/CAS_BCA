@@ -8,10 +8,9 @@ export function AuthProvider({ children }) {
     isAuthenticated: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
 
