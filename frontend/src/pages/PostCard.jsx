@@ -2,20 +2,21 @@ import React, { useRef, useState } from 'react'
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai'
 import { FaBookmark, FaRegBookmark, FaComment, FaShare } from "react-icons/fa";
 import gsap from 'gsap'
-import CommentBox from './commentBox';
 import ProjectDesription from './ProjectDesription';
+import { useAuth } from '../hooks/useAuth';
+import CommentBox from './CommentBox';
 
-const PostCard = ({id, image, title, author, github, liveLink, likes, saves, shares, comments, onLike, onShare }) => {
-  const [liked, setLiked] = useState(false)
+const PostCard = ({id, createdAt, description, image, title, author, authorId, github, liveLink, likes, saves, shares, comments }) => {
+  const { token } =useAuth()
+  const [liked,setLiked] = useState(false)
   const [saved, setSaved] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [descOpen, setDescOpen] = useState(false)
-
+  const [likeCount, setLikeCount] = useState(likes)
   const saveRef = useRef(null)
   const likeRef = useRef(null)
 
-  const toggleLike = () => {
-    setLiked(!liked)
+  const toggleLike = async() => {
     gsap.fromTo(
       likeRef.current,
       {
@@ -29,6 +30,38 @@ const PostCard = ({id, image, title, author, github, liveLink, likes, saves, sha
         ease: "bounce.out"
       }
     )
+
+    const  url = `https://cas-bca.onrender.com/api/v1/projects/${id}/likes`
+
+    try{
+      if(!liked){
+        setLiked(true)
+        setLikeCount((prev) => prev+1)
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        })
+        console.log("successfully liked")
+      }else{
+        setLiked(false)
+        setLikeCount((prev) => prev-1)
+        const response = await fetch(url,{
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        })
+        console.log("successfully unliked")
+      }
+    }catch(err){
+      console.error("failed to unlike", err.message)
+      setLiked((prev) => !prev)
+      setLikeCount((prev) => (liked? prev+1 : prev-1))
+    }
   }
 
   const toggleSave = () => {
@@ -76,15 +109,16 @@ const PostCard = ({id, image, title, author, github, liveLink, likes, saves, sha
         <button 
         onClick={toggleLike}
         className='cursor-pointer'>
-          <span ref={likeRef} className='inline-block'>
+          <span 
+            ref={likeRef} 
+            className='inline-block'>
             {liked?(
               <AiFillLike className='text-blue-500 text-lg  '/>
             ):(
               <AiOutlineLike className='hover:text-blue-500 text-lg' />
             )}
-            <span>{likes}</span>
+            <span>{likeCount}</span>
           </span>
-          
         </button>
         
 
@@ -120,10 +154,21 @@ const PostCard = ({id, image, title, author, github, liveLink, likes, saves, sha
           </span>
           {/* <span>{comments.len}</span> */}
         </button>
-        
       </div>
-      <CommentBox isOpen={isOpen} onClose={()=>setIsOpen(false)} />
-      <ProjectDesription isOpen={descOpen} onClose={()=>setDescOpen(false)}/>
+
+      <CommentBox
+        id={id}
+        isOpen={isOpen} 
+        onClose={()=>setIsOpen(false)} 
+      />
+
+      <ProjectDesription 
+        title={title}
+        author={author}
+        description={description}
+        isOpen={descOpen} 
+        onClose={()=>setDescOpen(false)}
+      />
     </div>
   )
 }

@@ -24,7 +24,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="project-showcase"
+          path="projectShowcase"
           element={
             <ProtectedRoute>
               <ProjectShowcase />
