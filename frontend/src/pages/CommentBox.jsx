@@ -1,16 +1,53 @@
 import { X } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AiOutlineClose } from 'react-icons/ai'
 import { FaHeart, FaRegHeart } from 'react-icons/fa'
+import { useAuth } from '../hooks/useAuth'
 
-const CommentBox = ({ isOpen, onClose }) => {
+const CommentBox = ({ id, isOpen, onClose }) => {
+  const { token } = useAuth()
   const [newComment, setNewComment] = useState("")
   const [comments, setComments] = useState([])
 
-  const handleAddComment = () => {
-    if(newComment === "") return
-    setComments([...comments, newComment])
+  const url = `https://cas-bca.onrender.com/api/v1/projects/${id}/comments`
+
+  useEffect(()=>{
+    if (!isOpen || !token) return
+
+    const loadComments = async() =>{
+      try{
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type" : "application/json"
+          }
+        })
+        const data = await response.json()
+        console.log(data)
+        setComments(data)
+      }catch(err){
+        console.error(err)
+      }
+    }
+    loadComments()
+  },[token])
+
+  const handleAddComment = async () => {
+    if(newComment.trim() === "") return
+    try{
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      })
+      const data = await response.json()
+      setComments((prev) => [...prev, data])
+    }catch(err){
+      console.error(err)
+    }
     setNewComment("")
   }
   

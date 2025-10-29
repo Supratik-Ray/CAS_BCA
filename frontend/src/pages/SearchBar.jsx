@@ -8,7 +8,6 @@ const SearchBar = ({ onSearch }) => {
     if (onSearch) onSearch(query)
   }
 
-  console.log(query)
   return (
     <form
     onSubmit={handleSearch}

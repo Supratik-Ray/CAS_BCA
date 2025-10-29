@@ -10,7 +10,7 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  console.log(isAuthenticated, "asdasdasdas");
+  console.log("authenticated:", isAuthenticated );
 
   const handleClick = () => {
     const whatsAppLink = "https://chat.whatsapp.com/BhEtOii34mF9rCl8vwqAf9";
@@ -61,7 +61,7 @@ function Navbar() {
             Add Project
           </Link>
           <Link
-            to={"/cas_bca.sit/project-showcase"}
+            to={"/cas_bca.sit/projectShowcase"}
             className="hover:font-semibold hover:underline transform transition duration-300 hover:scale-105"
           >
             Project Showcase
