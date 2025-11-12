@@ -24,14 +24,15 @@ const CommentBox = ({ id, isOpen, onClose }) => {
           },
         });
         const data = await response.json();
-        console.log(data);
-        setComments(data);
+        setComments(data.comments);
       } catch (err) {
         console.error(err);
       }
     };
     loadComments();
   }, [token, isOpen, url]);
+
+  console.log(comments);
 
   const handleAddComment = async () => {
     if (newComment.trim() === "") return;
@@ -42,9 +43,11 @@ const CommentBox = ({ id, isOpen, onClose }) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ text: newComment }),
       });
       const data = await response.json();
-      setComments((prev) => [...prev, data]);
+
+      setComments((prev) => [...prev, data.comment]);
     } catch (err) {
       console.error(err);
     }
@@ -73,10 +76,10 @@ const CommentBox = ({ id, isOpen, onClose }) => {
             comments.map((comment, index) => (
               <div key={index} className="px-5 border-b border-gray-300">
                 <div className="flex items-center gap-4">
-                  <h6>username</h6>
+                  <h6>{comment.createdBy?.name}</h6>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <p>{comment}</p>
+                  <p>{comment.text}</p>
                   <div className="flex gap-1 items-center">
                     <button>
                       <FaRegHeart />
