@@ -1,54 +1,58 @@
-import { useEffect, useState } from "react"
-import PostCard from "./PostCard"
-import SearchBar from "./SearchBar"
-import { useAuth } from "../hooks/useAuth"
+import { useEffect, useState } from "react";
+import PostCard from "./PostCard";
+import SearchBar from "./SearchBar";
+import { useAuth } from "../hooks/useAuth";
 
 const ProjectShowcase = () => {
-  const { token } = useAuth()
-  const [projects, setProjects] = useState([])
-  const [searchResults, setSearchResults] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const { token } = useAuth();
+  const [projects, setProjects] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      setIsLoading(true)
-      setError(null)
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch("https://cas-bca.onrender.com/api/v1/projects", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
+        const response = await fetch(
+          "https://cas-bca.onrender.com/api/v1/projects",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        if (!response.ok) throw new Error("Failed to fetch projects")
+        if (!response.ok) throw new Error("Failed to fetch projects");
 
-        const data = await response.json()
-        setProjects(data.projects || [])
+        const data = await response.json();
+        console.log(data);
+        setProjects(data.projects || []);
       } catch (err) {
-        setError(err.message)
+        setError(err.message);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    fetchProjects()
-  }, [token])
+    };
+    fetchProjects();
+  }, [token]);
 
   const handleSearch = (query) => {
     if (!query.trim()) {
-      setSearchResults(projects)
-      return
+      setSearchResults(projects);
+      return;
     }
     const filtered = projects.filter((p) =>
       p.title.toLowerCase().includes(query.toLowerCase())
-    )
-    setSearchResults(filtered)
-  }
+    );
+    setSearchResults(filtered);
+  };
 
   useEffect(() => {
-    setSearchResults(projects)
-  }, [projects])
+    setSearchResults(projects);
+  }, [projects]);
 
   return (
     <div className="pt-15 sm:pt-25 lg:pt-30">
@@ -75,21 +79,24 @@ const ProjectShowcase = () => {
             id={p._id}
             description={p.description || "No description given by author"}
             github={p.githubLink}
-            image={p.image?.url || "https://via.placeholder.com/400x200?text=No+Image"}
+            image={
+              p.image?.url ||
+              "https://via.placeholder.com/400x200?text=No+Image"
+            }
             liveLink={p.liveLink}
             title={p.title}
             author={p.createdBy?.name || "Unknown"}
             authorId={p.createdBy?._id}
             likes={p.totalLikes || 0}
-            
             saves={p.saves || 0}
             shares={p.shares || 0}
             comments={p.comments || 0}
+            hasLiked={p.userhasLiked}
           />
         ))}
       </article>
     </div>
-  )
-}
+  );
+};
 
-export default ProjectShowcase
+export default ProjectShowcase;
